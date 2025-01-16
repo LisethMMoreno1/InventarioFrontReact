@@ -7,7 +7,6 @@ import React, { useEffect, useState } from 'react';
 import { ProductIList } from '../../interfaces/Products/listaProduct';
 import { getProduct } from '../../services/api/ProductService/productService';
 import DataGridComponent from '../componentesGenerales/Tabla/tabla.components';
-import ButtonExport from './funcionExport/ButtonExportProduct';
 
 
 const ProductList: React.FC = () => {

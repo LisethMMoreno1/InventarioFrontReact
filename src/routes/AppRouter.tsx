@@ -60,7 +60,7 @@ const AppRouter: RouteType[] = [
     ],
   },
   {
-    path: "coustumer",
+    path: "Cliente",
     sidebarProps: {
       displayText: "Cliente",
       icon: <GroupIcon />,

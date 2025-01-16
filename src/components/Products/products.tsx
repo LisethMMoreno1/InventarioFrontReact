@@ -9,18 +9,19 @@ import {
   MenuItem,
   Select,
   TextField,
-  Typography,
 } from "@mui/material";
+import { useFormik } from "formik";
 import React, { useEffect } from "react";
-import useCategorysStore from "../../stores/Categorys";
+import { useNavigate } from "react-router-dom";
+import { showErrorAlert, showSuccessAlert } from "../../Utils/alert";
+import { ProductI } from "../../interfaces/Products/product";
+import AppRouter from "../../routes/AppRouter";
 import { getCategory } from "../../services/api/CategoryService/CategoryService";
+import { postProduct } from "../../services/api/ProductService/productService";
+import useCategorysStore from "../../stores/Categorys";
 import { useProductsStore } from "../../stores/ProductsStore";
 import { productSchema } from "../../types/Products/productsSchema";
-import { ProductI } from "../../interfaces/Products/product";
-import { useFormik } from "formik";
-import { showErrorAlert, showSuccessAlert } from "../../Utils/alert";
-import { postProduct } from "../../services/api/ProductService/productService";
-import { useNavigate } from "react-router-dom";
+import GeneralDashboard from "../componentesGenerales/GeneralDashboard/GeneralDashboard";
 
 const Products: React.FC = () => {
   const navigate = useNavigate();
@@ -77,18 +78,8 @@ const Products: React.FC = () => {
   }, [setCategories]);
 
   return (
-    <Container maxWidth={"lg"}>
-      <Box
-        sx={{
-          backgroundColor: "white",
-          padding: 4,
-          borderRadius: 2,
-          boxShadow: 5,
-        }}
-      >
-        <Typography variant="h4" component="h2" gutterBottom>
-          Registro de Producto
-        </Typography>
+    <GeneralDashboard title="Registrar de Producto" routes={AppRouter}>
+      <Container maxWidth={"lg"}>
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={3}>
@@ -210,8 +201,8 @@ const Products: React.FC = () => {
             </Button>
           </Box>
         </form>
-      </Box>
-    </Container>
+      </Container>
+    </GeneralDashboard>
   );
 };
 

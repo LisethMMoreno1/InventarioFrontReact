@@ -1,23 +1,23 @@
-import { Button, Container, Grid, Typography } from "@mui/material";
-import Box from "@mui/material/Box";
+import { Button, Container, Grid } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { useFormik } from "formik";
 import React, { useEffect } from "react";
 import { showErrorAlert, showSuccessAlert } from "../../../Utils/alert";
 import { NewTypeOfIdentification } from "../../../interfaces/typeOfIdentification/typeOfIdentificationCreate";
+import AppRouter from "../../../routes/AppRouter";
 import {
   getTypeOfIdentifications,
-  postTypeOfIdentifications
+  postTypeOfIdentifications,
 } from "../../../services/api/typeOfIdentificationService/typeOfIdentificationService";
 import typeOfIdentificationStore from "../../../stores/TypeOfIdentificationStore";
 import { typeOfIdentificationsSchema } from "../../../types/Mantenimiento/typeOfIdentification/typeOfIdentification";
+import GeneralDashboard from "../../componentesGenerales/GeneralDashboard/GeneralDashboard";
 
 const TypeOfIdentification: React.FC = () => {
-  const { setTypeOfIdentifications } =
-    typeOfIdentificationStore((state) => ({
-      typeOfIdentification: state.typeOfIdentification,
-      setTypeOfIdentifications: state.setTypeOfIdentifications,
-    }));
+  const { setTypeOfIdentifications } = typeOfIdentificationStore((state) => ({
+    typeOfIdentification: state.typeOfIdentification,
+    setTypeOfIdentifications: state.setTypeOfIdentifications,
+  }));
 
   const formik = useFormik({
     initialValues: {
@@ -63,21 +63,12 @@ const TypeOfIdentification: React.FC = () => {
     fetchTypeOfIdentifications();
   }, [setTypeOfIdentifications]);
 
-
   return (
     <Container maxWidth="lg">
-      <Box
-        sx={{
-          backgroundColor: "white",
-          padding: 4,
-          borderRadius: 2,
-          boxShadow: 5,
-          width: "100%",
-        }}
+      <GeneralDashboard
+        title="Registrar tipo de Identificacion"
+        routes={AppRouter}
       >
-        <Typography variant="h4" component="h2" gutterBottom>
-          Creación Tipo de Identificación
-        </Typography>
         <form onSubmit={formik.handleSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={3}>
@@ -125,7 +116,7 @@ const TypeOfIdentification: React.FC = () => {
             </Grid>
           </Grid>
         </form>
-      </Box>
+      </GeneralDashboard>
     </Container>
   );
 };

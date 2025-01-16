@@ -30,8 +30,10 @@ const UserList: React.FC = () => {
   };
 
   const handleCloseModal = () => {
+    setLoading(false);
     setOpenModal(false);
     setSelectedUser(null);
+    setLoading(true);
   };
 
   useEffect(() => {
@@ -120,22 +122,21 @@ const UserList: React.FC = () => {
     },
   ];
 
-
-
   const handleEditUser = (user: User) => {
     setSelectedUser(user);
-    setEditModalOpen(true);  // Open the modal when editing a user
+    setEditModalOpen(true);
+    setLoading(true);
   };
 
   const handleSaveUser = (updatedUser: User) => {
-    // Update the user (e.g., via API or state)
-    setSelectedUser(updatedUser);  // Update the selected user state with the edited data
-    setEditModalOpen(false);       // Close the modal after saving
+    setSelectedUser(updatedUser);
+    setEditModalOpen(false);
+    setLoading(true);
   };
-
 
   const handleDeleteClick = (user: User) => {
     alert(`Borrar usuario: ${user.firstName} ${user.firstLastName}`);
+    setLoading(true);
   };
 
   return (
@@ -155,9 +156,9 @@ const UserList: React.FC = () => {
         handleClose={handleCloseModal}
         selectedUser={selectedUser}
       />
-       <EditUserModal
+      <EditUserModal
         open={editModalOpen}
-        handleClose={() => setEditModalOpen(false)}
+        onCancel={() => setEditModalOpen(false)}
         user={selectedUser}
         onSave={handleSaveUser}
       />

@@ -1,76 +1,82 @@
-import React, { useState, useEffect } from "react";
-import {
-  Modal,
-  Box,
-  Typography,
-  TextField,
-  Button,
-  IconButton,
-  Paper,
-  Grid,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import SaveIcon from "@mui/icons-material/Save";
-import { SelectChangeEvent } from "@mui/material/Select"; // Import the correct type
+import {
+  Box,
+  FormControl,
+  FormHelperText,
+  Grid,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Modal,
+  Paper,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useFormik } from "formik";
+import React, { useState } from "react";
+import { RolesInter } from "../../../interfaces/Rol/rol";
+import { GenreInter } from "../../../interfaces/typeOfGenders/typeOfGenders";
+import { typeOfIdentification } from "../../../interfaces/typeOfIdentification/typeOfIdentification";
+import { User } from "../../../interfaces/Users/User";
+import { registreSchema } from "../../../types/users/registre/registreSchemas";
 import ActionButton from "../../componentesGenerales/Boton/ActionButton";
-
-interface User {
-  firstName: string;
-  middleName?: string;
-  firstLastName: string;
-  secondLastName?: string;
-  typeOfIdentification?: { name: string };
-  identificationNumber: string;
-  phoneNumber: string;
-  email: string;
-  [key: string]: string | { name: string } | undefined; // Add this index signature
-}
 
 interface EditUserModalProps {
   open: boolean;
-  handleClose: () => void;
+  onCancel: () => void;
   user: User | null;
   onSave: (updatedUser: User) => void;
 }
-
 const EditUserModal: React.FC<EditUserModalProps> = ({
   open,
-  handleClose,
+  onCancel,
   user,
   onSave,
 }) => {
-  const [editedUser, setEditedUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(false); // Nuevo estado para manejar la carga del formulario
-
-  useEffect(() => {
-    if (user) {
-      setEditedUser(user);
-    }
-  }, [user]);
+  const [loading, setLoading] = useState(false);
+  const [roles] = useState<RolesInter[]>([]);
+  const [typeOfIdentifications] = useState<typeOfIdentification[]>([]);
+  const [typeOfGenders] = useState<GenreInter[]>([]);
+  const formik = useFormik({
+    initialValues: {
+      firstName: user?.firstName || "",
+      firstLastName: user?.firstLastName || "",
+      middleName: user?.middleName || "",
+      secondLastName: user?.secondLastName || "",
+      phoneNumber: user?.phoneNumber || "",
+      role: user?.role ? user.role.typeOfRole : "",
+      email: user?.email || "",
+      typeOfIdentification: user?.typeOfIdentification || { name: "" },
+      identificationNumber: user?.identificationNumber || "",
+      genre: user?.genre || { genre: "" },
+    },
+    validationSchema: registreSchema,
+    onSubmit: (values) => {
+      onSave({
+        ...values,
+        role: { typeOfRole: values.role }, // Convertimos 'role' a un objeto con 'typeOfRole'
+        typeOfIdentification: values.typeOfIdentification,
+        genre: values.genre,
+      });
+    },
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (editedUser) {
-      setEditedUser({
-        ...editedUser,
-        [e.target.name]: e.target.value,
-      });
-    }
+    formik.handleChange(e);
   };
 
-  const handleSave = () => {
-    if (editedUser) {
-      onSave(editedUser);
-    }
+  const handleSave = async () => {
+    setLoading(true);
+    await formik.submitForm();
+    setLoading(false);
   };
 
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={onCancel}
       aria-labelledby="edit-user-modal"
       aria-describedby="modal-to-edit-user-details"
     >
@@ -97,11 +103,13 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
             alignItems: "center",
             mb: 2,
           }}
+          component="form"
+          onSubmit={formik.handleSubmit}
         >
           <Typography variant="h5" component="h2">
             Edit User
           </Typography>
-          <IconButton onClick={handleClose} aria-label="close">
+          <IconButton onClick={onCancel} aria-label="close">
             <CloseIcon />
           </IconButton>
         </Box>
@@ -111,7 +119,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
               fullWidth
               label="First Name"
               name="firstName"
-              value={editedUser?.firstName || ""}
+              value={formik.values.firstName}
               onChange={handleInputChange}
             />
           </Grid>
@@ -120,7 +128,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
               fullWidth
               label="Middle Name"
               name="middleName"
-              value={editedUser?.middleName || ""}
+              value={formik.values.middleName}
               onChange={handleInputChange}
             />
           </Grid>
@@ -129,7 +137,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
               fullWidth
               label="First Last Name"
               name="firstLastName"
-              value={editedUser?.firstLastName || ""}
+              value={formik.values.firstLastName}
               onChange={handleInputChange}
             />
           </Grid>
@@ -138,25 +146,41 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
               fullWidth
               label="Second Last Name"
               name="secondLastName"
-              value={editedUser?.secondLastName || ""}
+              value={formik.values.secondLastName}
               onChange={handleInputChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel id="type-of-identification-label">
-                Type of Identification
+            <FormControl fullWidth required>
+              <InputLabel id="typeOfIdentification-label">
+                Tipo de Identificación
               </InputLabel>
               <Select
-                labelId="type-of-identification-label"
+                labelId="typeOfIdentification-label"
+                id="typeOfIdentification"
                 name="typeOfIdentification"
-                value={editedUser?.typeOfIdentification?.name || ""}
-                label="Type of Identification"
+                value={formik.values.typeOfIdentification}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               >
-                <MenuItem value="DNI">DNI</MenuItem>
-                <MenuItem value="Passport">Passport</MenuItem>
-                <MenuItem value="Driver's License">Driver's License</MenuItem>
+                <MenuItem value="">
+                  <em>Seleccione...</em>
+                </MenuItem>
+                {typeOfIdentifications.map((type) => (
+                  <MenuItem key={type.id} value={type.id}>
+                    {type.name}
+                  </MenuItem>
+                ))}
               </Select>
+              {formik.touched.typeOfIdentification &&
+                formik.errors.typeOfIdentification && (
+                  <FormHelperText error>
+                    {formik.touched.typeOfIdentification &&
+                    formik.errors.typeOfIdentification
+                      ? formik.errors.typeOfIdentification.toString()
+                      : ""}
+                  </FormHelperText>
+                )}
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -164,7 +188,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
               fullWidth
               label="Identification Number"
               name="identificationNumber"
-              value={editedUser?.identificationNumber || ""}
+              value={formik.values.identificationNumber}
               onChange={handleInputChange}
             />
           </Grid>
@@ -173,7 +197,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
               fullWidth
               label="Phone Number"
               name="phoneNumber"
-              value={editedUser?.phoneNumber || ""}
+              value={formik.values.phoneNumber}
               onChange={handleInputChange}
             />
           </Grid>
@@ -183,40 +207,76 @@ const EditUserModal: React.FC<EditUserModalProps> = ({
               label="Email"
               name="email"
               type="email"
-              value={editedUser?.email || ""}
+              value={formik.values.email}
               onChange={handleInputChange}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel id="role-label">Role</InputLabel>
-              <Select labelId="role-label" name="role" label="Role">
-                <MenuItem value="Admin">Admin</MenuItem>
-                <MenuItem value="User">User</MenuItem>
-                <MenuItem value="Manager">Manager</MenuItem>
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="typeOfRole-label">Rol</InputLabel>
+              <Select
+                labelId="typeOfRole-label"
+                id="typeOfRole"
+                name="role" // Cambié el nombre a "role" para que coincida con el nombre del valor en formik
+                value={formik.values.role} // El valor que debe ser un string (no un objeto)
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              >
+                <MenuItem value="">
+                  <em>Seleccione...</em>
+                </MenuItem>
+                {roles.map((role) => (
+                  <MenuItem key={role.id} value={role.typeOfRole}>
+                    {" "}
+                    {/* El valor debe ser 'role.typeOfRole' */}
+                    {role.typeOfRole}{" "}
+                    {/* Este es el texto visible en el desplegable */}
+                  </MenuItem>
+                ))}
               </Select>
+              {formik.touched.role && formik.errors.role && (
+                <FormHelperText error>{formik.errors.role}</FormHelperText>
+              )}
             </FormControl>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
-              <InputLabel id="genre-label">Gender</InputLabel>
-              <Select labelId="genre-label" name="genre" label="Gender">
-                <MenuItem value="Male">Male</MenuItem>
-                <MenuItem value="Female">Female</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
+            <FormControl fullWidth margin="normal">
+              <InputLabel id="genre-label">Género</InputLabel>
+              <Select
+                labelId="genre-label"
+                id="genre"
+                name="genre"
+                value={formik.values.genre}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              >
+                <MenuItem value="">
+                  <em>Seleccione...</em>
+                </MenuItem>
+                {typeOfGenders.map((type) => (
+                  <MenuItem key={type.id} value={type.id}>
+                    {type.genre}
+                  </MenuItem>
+                ))}
               </Select>
+              {formik.touched.genre && formik.errors.genre && (
+                <FormHelperText error>
+                  {formik.touched.genre && formik.errors.genre
+                    ? formik.errors.genre.toString()
+                    : ""}
+                </FormHelperText>
+              )}
             </FormControl>
           </Grid>
         </Grid>
-     
-        <ActionButton
-                  loading={loading}
-                  text="Actualizar Usuario"
-                  loadingText="Guardando..."
-                  startIcon={<SaveIcon />}
 
-                  onClick={handleSave}
-                />
+        <ActionButton
+          loading={loading}
+          text="Actualizar Usuario"
+          loadingText="Guardando..."
+          startIcon={<SaveIcon />}
+          onClick={handleSave}
+        />
       </Paper>
     </Modal>
   );
