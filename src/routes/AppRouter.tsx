@@ -12,25 +12,9 @@ import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRig
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import TransgenderIcon from "@mui/icons-material/Transgender";
 import React from "react";
-import ListProducts from "../components/Products/ListProduct";
-import UserList from "../components/users/ListOfUsers/ListUsers";
-import CategoryPages from "../pages/Category/Category";
-import SubCategoryPages from "../pages/Category/subCategory";
-import CustomersPages from "../pages/Customers/customers";
-import ListCustomersPages from "../pages/Customers/listCustomers";
 
-import ListOrdenPage from "../pages/Orden/ListOrden";
-import OrderDetailsPage from "../pages/Orden/OrderDetails";
-import RegistrePage from "../pages/Users/registre";
 
-import CountryPage from "../pages/mantenimiento/country";
-import RolesPage from "../pages/mantenimiento/roles";
-import TypeOfGenderPage from "../pages/mantenimiento/typeOfGender";
-import TypeOfIdentificationPage from "../pages/mantenimiento/typeOfIdentification";
-import PaymentListPage from "../pages/Payment/Payment";
-import ProductsPage from "../pages/Product/products";
-import ListPurchasePage from "../pages/purchaseOfProduct/ListPurchase";
-import PurchasePage from "../pages/purchaseOfProduct/Purchases";
+import { default as CreateUserPage, default as ListUserPage } from "../pages/Users/createUser";
 import { RouteType } from "./route";
 
 const AppRouter: RouteType[] = [
@@ -43,7 +27,7 @@ const AppRouter: RouteType[] = [
     children: [
       {
         path: "Registro de Usuario",
-        element: <RegistrePage />,
+        element: <CreateUserPage />,
         sidebarProps: {
           displayText: "Registro de Usuario",
           icon: <AccountBoxIcon />,
@@ -51,7 +35,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Lista de Usuario",
-        element: <UserList />,
+        element: <ListUserPage />,
         sidebarProps: {
           displayText: "Lista de Usuario",
           icon: <ListAltIcon />,
@@ -68,7 +52,7 @@ const AppRouter: RouteType[] = [
     children: [
       {
         path: "Registro de Cliente",
-        element: <CustomersPages />,
+        /* element: <CustomersPages />, */
         sidebarProps: {
           displayText: "Registro de Cliente",
           icon: <GroupIcon />,
@@ -76,7 +60,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Lista de Clientes",
-        element: <ListCustomersPages />,
+        /*   element: <ListCustomersPages />, */
         sidebarProps: {
           displayText: "Lista de Clientes",
           icon: <HistoryIcon />,
@@ -84,7 +68,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Detalle de Orden",
-        element: <OrderDetailsPage />,
+        /*   element: <OrderDetailsPage />, */
         sidebarProps: {
           displayText: "Detalle de Orden",
           icon: <HistoryIcon />,
@@ -92,7 +76,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Lista de Orden",
-        element: <ListOrdenPage />,
+        /*  element: <ListOrdenPage />, */
         sidebarProps: {
           displayText: "Lista de Orden",
           icon: <HistoryIcon />,
@@ -109,7 +93,7 @@ const AppRouter: RouteType[] = [
     children: [
       {
         path: "Registro de Producto",
-        element: <ProductsPage />,
+        /*  element: <ProductsPage />, */
         sidebarProps: {
           displayText: "Registro de Producto",
           icon: <InventoryIcon />,
@@ -117,7 +101,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Lista de Productos",
-        element: <ListProducts />,
+        /*  element: <ListProductsPage />, */
         sidebarProps: {
           displayText: "Lista de Productos",
           icon: <InventoryIcon />,
@@ -125,7 +109,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Registro de Compras",
-        element: <PurchasePage />,
+        /*     element: <PurchasePage />, */
         sidebarProps: {
           displayText: "Registro de Compras",
           icon: <InventoryIcon />,
@@ -133,7 +117,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Lista de Compras",
-        element: <ListPurchasePage />,
+        /*  element: <ListPurchasePage />, */
         sidebarProps: {
           displayText: "Lista de Compras",
           icon: <InventoryIcon />,
@@ -150,7 +134,7 @@ const AppRouter: RouteType[] = [
     children: [
       {
         path: "Lista de Pagos",
-        element: <PaymentListPage />,
+        /*    element: <PaymentListPage />, */
         sidebarProps: {
           displayText: "Lista de Pagos",
           icon: <AccountBoxIcon />,
@@ -167,7 +151,7 @@ const AppRouter: RouteType[] = [
     children: [
       {
         path: "Tipo de Identificacion",
-        element: <TypeOfIdentificationPage />,
+        /* element: <TypeOfIdentificationPage />, */
         sidebarProps: {
           displayText: "Tipo de Identificacion",
           icon: <CardMembershipIcon />,
@@ -175,7 +159,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Tipo de Genero",
-        element: <TypeOfGenderPage />,
+        /*    element: <TypeOfGenderPage />, */
         sidebarProps: {
           displayText: "Tipo de Genero",
           icon: <TransgenderIcon />,
@@ -183,7 +167,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Roles",
-        element: <RolesPage />,
+        /*  element: <RolesPage />, */
         sidebarProps: {
           displayText: "Creación de roles",
           icon: <SupervisorAccountIcon />,
@@ -191,7 +175,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Cuidad",
-        element: <CountryPage />,
+        /*  element: <CountryPage />, */
         sidebarProps: {
           displayText: "Creación de Cuidad y Departamento",
           icon: <PublicIcon />,
@@ -199,7 +183,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Categoria",
-        element: <CategoryPages />,
+        /*   element: <CategoryPages />, */
         sidebarProps: {
           displayText: "Creación de categorias",
           icon: <CategoryIcon />,
@@ -207,7 +191,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Sub - Categoria",
-        element: <SubCategoryPages />,
+        /*   element: <SubCategoryPages />, */
         sidebarProps: {
           displayText: "Sub - Categoria",
           icon: <SubdirectoryArrowRightIcon />,
