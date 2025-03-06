@@ -1,83 +1,88 @@
 import React from "react";
 import Box from "@mui/material/Box";
-import { DataGrid, GridColDef, GridValidRowModel } from "@mui/x-data-grid";
-import { Container, Typography } from "@mui/material";
+import Paper from "@mui/material/Paper";
+import {
+  DataGrid,
+  GridColDef,
+  GridValidRowModel,
+  GridToolbar,
+} from "@mui/x-data-grid";
+import { Typography } from "@mui/material";
 
 interface DataGridProps<T extends GridValidRowModel> {
   rows: T[];
   columns: GridColDef<T>[];
-  children?: React.ReactNode;
+  title?: string;
 }
 
 const DataGridComponent = <T extends GridValidRowModel>({
   rows,
   columns,
-  children,
+  title,
 }: DataGridProps<T>) => {
   return (
-    <Container
-      maxWidth={false}
+    <Paper
       sx={{
-        height: "calc(75vh - 90px)",
-        padding: "15px",
-        overflowX: "hidden", 
+        height: "calc(100vh - 380px)",
+        minHeight: "400px",
+        borderRadius: 2,
+        overflow: "hidden",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+        m: 2,
       }}
     >
-      <Box
-        sx={{
-          backgroundColor: "background.paper",
-          borderRadius: 1,
-          overflow: "hidden",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {children && (
-          <Box sx={{ padding: 2, borderBottom: 1, borderColor: "divider" }}>
-            <Typography variant="h6" component="h2">
-              {children}
-            </Typography>
-          </Box>
-        )}
-        <Box sx={{ flexGrow: 1, width: "100%" }}>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: {
-                  pageSize: 15,
-                },
-              },
-            }}
-            pageSizeOptions={[15, 25, 50]}
-            checkboxSelection
-            disableRowSelectionOnClick
-            sx={{
-              border: "none",
-              "& .MuiDataGrid-cell": {
-                borderBottom: "none",
-              },
-              "& .MuiDataGrid-columnHeaders": {
-                backgroundColor: "background.default",
-                borderBottom: 1,
-                borderColor: "divider",
-              },
-              "& .MuiDataGrid-row:nth-of-type(even)": {
+      {title && (
+        <Box sx={{ p: 2, borderBottom: "1px solid", borderColor: "divider" }}>
+          <Typography variant="h6">{title}</Typography>
+        </Box>
+      )}
+      <Box sx={{ height: "100%", width: "100%" }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+            sorting: {
+              sortModel: [],
+            },
+          }}
+          pageSizeOptions={[5, 10, 25]}
+          checkboxSelection
+          disableRowSelectionOnClick
+          slots={{ toolbar: GridToolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+              quickFilterProps: { debounceMs: 500 },
+            },
+          }}
+          sx={{
+            border: "none",
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: "background.paper",
+              borderBottom: "1px solid",
+              borderColor: "divider",
+            },
+            "& .MuiDataGrid-cell": {
+              borderBottom: "none",
+            },
+            "& .MuiDataGrid-row": {
+              borderBottom: "1px solid",
+              borderColor: "divider",
+              transition: "background-color 0.2s",
+              "&:hover": {
                 backgroundColor: "action.hover",
               },
-              "& .MuiDataGrid-columnHeaderTitle": {
-                fontWeight: "bold",
-              },
-              "& .MuiDataGrid-root": {
-                width: "100%", 
-              },
-            }}
-          />
-        </Box>
+            },
+            "& .MuiDataGrid-row:nth-of-type(even)": {
+              backgroundColor: "action.hover",
+            },
+          }}
+        />
       </Box>
-    </Container>
+    </Paper>
   );
 };
 

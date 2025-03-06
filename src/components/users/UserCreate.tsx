@@ -1,182 +1,197 @@
 import React, { useState, useEffect } from "react";
 import {
-  Box,
-  Button,
-  CircularProgress,
-  MenuItem,
   TextField,
+  Button,
+  Container,
   Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
-import { createUser } from "../../services/userService";
-import { getTypeOfGender } from "../../services/typeOfGenderService";
+import { SelectChangeEvent } from "@mui/material/Select";
 import { User } from "../../types/users/user.types";
-import { TypeOfGender } from "../../types/TypeOfGender/typeOfGender.types";
+import { Tool } from "../../types/tool/tool.type";
+// Importamos el servicio de usuario y herramientas (utilizando exportaciones nombradas)
+import * as userService from "../../services/userService";
+import { toolsService } from "../../services/toolsService";
 
-const roles = [
-  { id: 1, name: "Administrador" },
-  { id: 2, name: "Vendedor" },
-];
+interface CreateUserProps {
+  user?: User;
+  onSuccess: () => void;
+}
 
-const CreateUser = () => {
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [genders, setGenders] = useState<TypeOfGender[]>([]);
+const CreateUser: React.FC<CreateUserProps> = ({ user, onSuccess }) => {
+  // Nota: Usamos un estado que extiende el tipo User para incluir 'role'
+  const [formData, setFormData] = useState<User & { role?: string }>({
+    id_user: user?.id_user || 0,
+    name: user?.name || "",
+    identificationNumber: user?.identificationNumber || "",
+    email: user?.email || "",
+    password: user?.password || "",
+    code_tool: user?.code_tool || "",
+    tool: user?.tool || {
+      id: 0,
+      name: "",
+      type: "",
+      code: "",
+      description: "",
+      state: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    state: user?.state ?? true,
+    created_at: user?.created_at ? new Date(user.created_at) : new Date(),
+    updated_at: user?.updated_at ? new Date(user.updated_at) : new Date(),
+    accessToken: user?.accessToken || "",
+    role: (user as any)?.role || "", // Se agrega la propiedad role
+  });
+
+  // Opciones para los selects: se obtienen del servicio de herramientas y son de tipo Tool
+  const [identificationOptions, setIdentificationOptions] = useState<Tool[]>(
+    []
+  );
+  const [ggUserData, setGgUserData] = useState<Tool[]>([]);
 
   useEffect(() => {
-    const fetchGenders = async () => {
-      try {
-        const data = await getTypeOfGender();
-        setGenders(data);
-      } catch (error) {
-        setErrorMessage("Error al obtener tipos de género");
-      }
-    };
-    fetchGenders();
+    // Se obtienen las herramientas filtradas por "CC" para el select de identificación
+    toolsService
+      .getToolsByCode("CC")
+      .then((data: Tool[]) => setIdentificationOptions(data))
+      .catch((error: any) =>
+        console.error("Error al obtener datos para CC:", error)
+      );
+
+    // Se obtienen las herramientas filtradas por "GG" para el select de código GG
+    toolsService
+      .getToolsByCode("GG")
+      .then((data: Tool[]) => setGgUserData(data))
+      .catch((error: any) =>
+        console.error("Error al obtener datos para GG:", error)
+      );
   }, []);
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<Partial<User>>();
+  // Manejador para inputs de texto (TextField)
+  const handleTextFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const onSubmit = async (data: Partial<User>) => {
-    setLoading(true);
-    setErrorMessage(null);
-    setSuccessMessage(null);
+  // Manejador para los Select de Material-UI
+  const handleSelectChange = (e: SelectChangeEvent<string>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async () => {
+    // Extraer las propiedades que no se deben enviar
+    const {
+      id_user,
+      tool,
+      created_at,
+      updated_at,
+      accessToken,
+      state,
+      ...payload
+    } = formData;
+
+    console.log("Payload enviado:", payload); // Se imprime en consola el payload final
 
     try {
-      await createUser(data);
-      setSuccessMessage("Usuario creado exitosamente");
-      reset();
+      if (user) {
+        await userService.updateUser(user.id_user, payload);
+      } else {
+        await userService.createUser(payload);
+      }
+      onSuccess();
     } catch (error) {
-      setErrorMessage("Error al crear usuario");
-    } finally {
-      setLoading(false);
+      console.error("Error al guardar el usuario", error);
     }
   };
 
   return (
-    <Box sx={{ width: "50%", margin: "auto", mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Crear Usuario
+    <Container>
+      <Typography variant="h5" gutterBottom>
+        {user ? "Editar Usuario" : "Crear Usuario"}
       </Typography>
+      <TextField
+        label="Nombre"
+        name="name"
+        value={formData.name}
+        onChange={handleTextFieldChange}
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        label="Correo"
+        name="email"
+        value={formData.email}
+        onChange={handleTextFieldChange}
+        fullWidth
+        margin="normal"
+      />
+      <TextField
+        label="Contraseña"
+        name="password"
+        type="password"
+        value={formData.password}
+        onChange={handleTextFieldChange}
+        fullWidth
+        margin="normal"
+      />
 
-      {errorMessage && (
-        <Typography color="error" variant="body1">
-          {errorMessage}
-        </Typography>
-      )}
-      {successMessage && (
-        <Typography color="success.main" variant="body1">
-          {successMessage}
-        </Typography>
-      )}
-
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Controller
-          name="name"
-          control={control}
-          rules={{ required: "El nombre es obligatorio" }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Nombre"
-              fullWidth
-              margin="normal"
-              error={!!errors.name}
-              helperText={errors.name?.message}
-            />
-          )}
-        />
-
-        <Controller
-          name="email"
-          control={control}
-          rules={{
-            required: "El email es obligatorio",
-            pattern: {
-              value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-              message: "Email inválido",
-            },
-          }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Correo Electrónico"
-              fullWidth
-              margin="normal"
-              error={!!errors.email}
-              helperText={errors.email?.message}
-            />
-          )}
-        />
-
-        <Controller
-          name="password"
-          control={control}
-          rules={{ required: "La contraseña es obligatoria" }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              label="Contraseña"
-              type="password"
-              fullWidth
-              margin="normal"
-              error={!!errors.password}
-              helperText={errors.password?.message}
-            />
-          )}
-        />
-
-        <Controller
-          name="typeOfGender"
-          control={control}
-          rules={{ required: "El género es obligatorio" }}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              select
-              label="Género"
-              fullWidth
-              margin="normal"
-              error={!!errors.typeOfGender}
-              helperText={errors.typeOfGender?.message}
-              onChange={(e) =>
-                field.onChange(
-                  genders.find(
-                    (g) => g.id_typeOfGender === Number(e.target.value)
-                  ) || null
-                )
-              }
-            >
-              {genders.map((gender) => (
-                <MenuItem
-                  key={gender.id_typeOfGender}
-                  value={gender.id_typeOfGender}
-                >
-                  {gender.name_typeOfGender}
-                </MenuItem>
-              ))}
-            </TextField>
-          )}
-        />
-
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          sx={{ mt: 3 }}
-          disabled={loading}
+      {/* Select para "Tipo de Identificación" filtrado por "CC" */}
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="identification-number-label">
+          Tipo de Identificación (CC)
+        </InputLabel>
+        <Select
+          labelId="identification-number-label"
+          name="identificationNumber"
+          value={formData.identificationNumber}
+          onChange={handleSelectChange}
+          label="Tipo de Identificación (CC)"
         >
-          {loading ? <CircularProgress size={24} /> : "Crear Usuario"}
-        </Button>
-      </form>
-    </Box>
+          {identificationOptions.map((item) => (
+            <MenuItem key={item.id} value={item.code}>
+              {item.name} ({item.code})
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      {/* Select para "Código GG" */}
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="code-gg-label">Código GG</InputLabel>
+        <Select
+          labelId="code-gg-label"
+          name="code_tool"
+          value={formData.code_tool}
+          onChange={handleSelectChange}
+          label="Código GG"
+        >
+          {ggUserData.map((item) => (
+            <MenuItem key={item.id} value={item.code}>
+              {item.name} ({item.code})
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      {/* Campo para Rol (obligatorio según el backend) */}
+      <TextField
+        label="Rol"
+        name="role"
+        value={formData.role}
+        onChange={handleTextFieldChange}
+        fullWidth
+        margin="normal"
+      />
+
+      <Button variant="contained" color="primary" onClick={handleSubmit}>
+        {user ? "Actualizar" : "Crear"}
+      </Button>
+    </Container>
   );
 };
 

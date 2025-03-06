@@ -1,15 +1,17 @@
-export interface User {
+import { Tool } from "../tool/tool.type";
+
+export type User = {
   id_user: number;
-  identificationNumber: number;
+  identificationNumber: string; // Cambiado a string porque es varchar(15) en la BD
   name: string;
   email: string;
-  password?: string;
-  typeOfGender: number;
-  typeOfIdentification: number;
+  password?: string; // Opcional porque es nullable en la BD
+  code_tool: string;
+  tool: Tool;
   state: boolean;
-  accessToken?: string;
+  accessToken?: string; // Opcional porque es nullable en la BD
   created_at: Date;
   updated_at: Date;
-  role: number;
-  roleModule?: number;
-}
+  /*   role: Role;
+  roleModule?: RoleModule;  */ // Opcional porque puede ser nullable en la BD
+};

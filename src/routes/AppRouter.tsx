@@ -1,20 +1,18 @@
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import CardMembershipIcon from "@mui/icons-material/CardMembership";
-import CategoryIcon from "@mui/icons-material/Category";
 import GroupIcon from "@mui/icons-material/Group";
 import HistoryIcon from "@mui/icons-material/History";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import PersonIcon from "@mui/icons-material/Person";
-import PublicIcon from "@mui/icons-material/Public";
 import SettingsIcon from "@mui/icons-material/Settings";
-import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
-import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
-import TransgenderIcon from "@mui/icons-material/Transgender";
 import React from "react";
 
-
-import { default as CreateUserPage, default as ListUserPage } from "../pages/Users/createUser";
+import ToolPage from "../pages/Tool/toolPage";
+import {
+  default as CreateUserPage,
+  default as ListUserPage,
+} from "../pages/Users/createUser";
 import { RouteType } from "./route";
 
 const AppRouter: RouteType[] = [
@@ -52,8 +50,8 @@ const AppRouter: RouteType[] = [
     children: [
       {
         path: "Registro de Cliente",
-        /* element: <CustomersPages />, */
-        sidebarProps: {
+/*         element: <InventoryManagement />,
+ */        sidebarProps: {
           displayText: "Registro de Cliente",
           icon: <GroupIcon />,
         },
@@ -150,51 +148,11 @@ const AppRouter: RouteType[] = [
     },
     children: [
       {
-        path: "Tipo de Identificacion",
-        /* element: <TypeOfIdentificationPage />, */
+        path: "Utilitarios",
+        element: <ToolPage />,
         sidebarProps: {
-          displayText: "Tipo de Identificacion",
+          displayText: "Utilitarios",
           icon: <CardMembershipIcon />,
-        },
-      },
-      {
-        path: "Tipo de Genero",
-        /*    element: <TypeOfGenderPage />, */
-        sidebarProps: {
-          displayText: "Tipo de Genero",
-          icon: <TransgenderIcon />,
-        },
-      },
-      {
-        path: "Roles",
-        /*  element: <RolesPage />, */
-        sidebarProps: {
-          displayText: "Creación de roles",
-          icon: <SupervisorAccountIcon />,
-        },
-      },
-      {
-        path: "Cuidad",
-        /*  element: <CountryPage />, */
-        sidebarProps: {
-          displayText: "Creación de Cuidad y Departamento",
-          icon: <PublicIcon />,
-        },
-      },
-      {
-        path: "Categoria",
-        /*   element: <CategoryPages />, */
-        sidebarProps: {
-          displayText: "Creación de categorias",
-          icon: <CategoryIcon />,
-        },
-      },
-      {
-        path: "Sub - Categoria",
-        /*   element: <SubCategoryPages />, */
-        sidebarProps: {
-          displayText: "Sub - Categoria",
-          icon: <SubdirectoryArrowRightIcon />,
         },
       },
     ],
