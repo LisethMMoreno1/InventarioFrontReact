@@ -13,12 +13,15 @@ export async function getUsers(): Promise<User[]> {
 }
 
 // Obtener usuario por ID
-export async function getUserById(id: number): Promise<User> {
+export async function getUserById(identificationNumber: number): Promise<User> {
   try {
-    const response = await api.get<User>(`/user/${id}`);
+    const response = await api.get<User>(`/user/${identificationNumber}`);
     return response.data;
   } catch (error) {
-    console.error(`Error al obtener usuario con ID ${id}:`, error);
+    console.error(
+      `Error al obtener usuario con ID ${identificationNumber}:`,
+      error
+    );
     throw error;
   }
 }
@@ -36,14 +39,17 @@ export async function createUser(user: Partial<User>): Promise<User> {
 
 // Actualizar un usuario
 export async function updateUser(
-  id: number,
+  identificationNumber: number,
   user: Partial<User>
 ): Promise<User> {
   try {
-    const response = await api.put<User>(`/user/${id}`, user);
+    const response = await api.put<User>(`/user/${identificationNumber}`, user);
     return response.data;
   } catch (error) {
-    console.error(`Error al actualizar usuario con ID ${id}:`, error);
+    console.error(
+      `Error al actualizar usuario con ID ${identificationNumber}:`,
+      error
+    );
     throw error;
   }
 }

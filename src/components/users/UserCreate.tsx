@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from "react";
 import {
-  TextField,
-  Button,
-  Container,
-  Typography,
-  Select,
-  MenuItem,
   FormControl,
+  Grid,
   InputLabel,
+  MenuItem,
+  Select,
+  TextField,
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { User } from "../../types/users/user.types";
-import { Tool } from "../../types/tool/tool.type";
-// Importamos el servicio de usuario y herramientas (utilizando exportaciones nombradas)
-import * as userService from "../../services/userService";
+import React, { useEffect, useMemo, useState } from "react";
 import { toolsService } from "../../services/toolsService";
+import * as userService from "../../services/userService";
+import { Tool } from "../../types/tool/tool.type";
+import { User } from "../../types/users/user.types";
+import ComponentFormInline from "../componentesGenerales/Form/componentFormInline";
 
 interface CreateUserProps {
   user?: User;
@@ -22,80 +20,97 @@ interface CreateUserProps {
 }
 
 const CreateUser: React.FC<CreateUserProps> = ({ user, onSuccess }) => {
-  // Nota: Usamos un estado que extiende el tipo User para incluir 'role'
-  const [formData, setFormData] = useState<User & { role?: string }>({
-    id_user: user?.id_user || 0,
-    name: user?.name || "",
-    identificationNumber: user?.identificationNumber || "",
-    email: user?.email || "",
-    password: user?.password || "",
-    code_tool: user?.code_tool || "",
-    tool: user?.tool || {
-      id: 0,
-      name: "",
-      type: "",
-      code: "",
-      description: "",
-      state: true,
-      created_at: new Date(),
-      updated_at: new Date(),
-    },
-    state: user?.state ?? true,
-    created_at: user?.created_at ? new Date(user.created_at) : new Date(),
-    updated_at: user?.updated_at ? new Date(user.updated_at) : new Date(),
-    accessToken: user?.accessToken || "",
-    role: (user as any)?.role || "", // Se agrega la propiedad role
-  });
+  // Estado inicial basado en user
+  const initialFormState = useMemo(
+    (): User => ({
+      id_user: user?.id_user || 0,
+      name: user?.name || "",
+      identificationNumber: user?.identificationNumber || "",
+      email: user?.email || "",
+      password: user?.password || "",
+      code_tool: user?.code_tool || "",
+      tool: user?.tool || {
+        id: 0,
+        name: "",
+        code: "",
+        type: "",
+        description: "",
+        created_at: new Date(),
+        updated_at: new Date(),
+      }, // ✅ Asegurar estructura completa
+      state: user?.state ?? true,
+      created_at: user?.created_at ? new Date(user.created_at) : new Date(),
+      updated_at: user?.updated_at ? new Date(user.updated_at) : new Date(),
+      accessToken: user?.accessToken || "",
+      role: user?.role || "",
+    }),
+    [user]
+  );
 
-  // Opciones para los selects: se obtienen del servicio de herramientas y son de tipo Tool
+  const [formData, setFormData] = useState<User>(initialFormState);
   const [identificationOptions, setIdentificationOptions] = useState<Tool[]>(
     []
   );
-  const [ggUserData, setGgUserData] = useState<Tool[]>([]);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    // Se obtienen las herramientas filtradas por "CC" para el select de identificación
     toolsService
       .getToolsByCode("CC")
       .then((data: Tool[]) => setIdentificationOptions(data))
-      .catch((error: any) =>
-        console.error("Error al obtener datos para CC:", error)
-      );
-
-    // Se obtienen las herramientas filtradas por "GG" para el select de código GG
-    toolsService
-      .getToolsByCode("GG")
-      .then((data: Tool[]) => setGgUserData(data))
-      .catch((error: any) =>
-        console.error("Error al obtener datos para GG:", error)
+      .catch((error) =>
+        console.error(
+          "Error al obtener datos para el tipo de identificación:",
+          error
+        )
       );
   }, []);
 
-  // Manejador para inputs de texto (TextField)
+  useEffect(() => {
+    if (saved) {
+      setFormData(initialFormState);
+      alert("Usuario creado exitosamente");
+      setSaved(false);
+    }
+  }, [saved, initialFormState]);
+
+  // Manejador para inputs de texto
   const handleTextFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Manejador para los Select de Material-UI
-  const handleSelectChange = (e: SelectChangeEvent<string>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleIdentificationTypeChange = (e: SelectChangeEvent<string>) => {
+    const { value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      tool: {
+        ...prev.tool, // Mantener las propiedades previas de tool
+        code: value,
+      },
+      code_tool: value,
+    }));
   };
 
   const handleSubmit = async () => {
-    // Extraer las propiedades que no se deben enviar
+    // Extraemos las propiedades no necesarias en la petición
     const {
       id_user,
-      tool,
       created_at,
       updated_at,
       accessToken,
       state,
+      tool,
       ...payload
     } = formData;
 
-    console.log("Payload enviado:", payload); // Se imprime en consola el payload final
+    // Asegurar que code_tool sea una cadena válida
+    if (!payload.code_tool || typeof payload.code_tool !== "string") {
+      console.error("Error: code_tool es inválido.");
+      return;
+    }
+
+    console.log("Payload enviado:", payload);
 
     try {
       if (user) {
@@ -104,94 +119,100 @@ const CreateUser: React.FC<CreateUserProps> = ({ user, onSuccess }) => {
         await userService.createUser(payload);
       }
       onSuccess();
+      setSaved(true);
     } catch (error) {
       console.error("Error al guardar el usuario", error);
     }
   };
 
   return (
-    <Container>
-      <Typography variant="h5" gutterBottom>
-        {user ? "Editar Usuario" : "Crear Usuario"}
-      </Typography>
-      <TextField
-        label="Nombre"
-        name="name"
-        value={formData.name}
-        onChange={handleTextFieldChange}
-        fullWidth
-        margin="normal"
-      />
-      <TextField
-        label="Correo"
-        name="email"
-        value={formData.email}
-        onChange={handleTextFieldChange}
-        fullWidth
-        margin="normal"
-      />
-      <TextField
-        label="Contraseña"
-        name="password"
-        type="password"
-        value={formData.password}
-        onChange={handleTextFieldChange}
-        fullWidth
-        margin="normal"
-      />
-
-      {/* Select para "Tipo de Identificación" filtrado por "CC" */}
-      <FormControl fullWidth margin="normal">
-        <InputLabel id="identification-number-label">
-          Tipo de Identificación (CC)
-        </InputLabel>
-        <Select
-          labelId="identification-number-label"
-          name="identificationNumber"
-          value={formData.identificationNumber}
-          onChange={handleSelectChange}
-          label="Tipo de Identificación (CC)"
-        >
-          {identificationOptions.map((item) => (
-            <MenuItem key={item.id} value={item.code}>
-              {item.name} ({item.code})
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      {/* Select para "Código GG" */}
-      <FormControl fullWidth margin="normal">
-        <InputLabel id="code-gg-label">Código GG</InputLabel>
-        <Select
-          labelId="code-gg-label"
-          name="code_tool"
-          value={formData.code_tool}
-          onChange={handleSelectChange}
-          label="Código GG"
-        >
-          {ggUserData.map((item) => (
-            <MenuItem key={item.id} value={item.code}>
-              {item.name} ({item.code})
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      {/* Campo para Rol (obligatorio según el backend) */}
-      <TextField
-        label="Rol"
-        name="role"
-        value={formData.role}
-        onChange={handleTextFieldChange}
-        fullWidth
-        margin="normal"
-      />
-
-      <Button variant="contained" color="primary" onClick={handleSubmit}>
-        {user ? "Actualizar" : "Crear"}
-      </Button>
-    </Container>
+    <ComponentFormInline
+      title={user ? "Editar Usuario" : "Crear Usuario del sistema"}
+      onSubmit={handleSubmit}
+      onCancel={() => setFormData(initialFormState)}
+      submitLabel={user ? "Actualizar Usuario" : "Crear Usuario"}
+    >
+      <form onSubmit={handleSubmit} noValidate>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Nombre"
+              name="name"
+              value={formData.name}
+              onChange={handleTextFieldChange}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Correo"
+              name="email"
+              value={formData.email}
+              onChange={handleTextFieldChange}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Contraseña"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleTextFieldChange}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth margin="normal" variant="outlined">
+              <InputLabel id="identification-type-label">
+                Tipo de Identificación (CC)
+              </InputLabel>
+              <Select
+                labelId="identification-type-label"
+                name="identificationType"
+                value={formData.code_tool}
+                onChange={handleIdentificationTypeChange}
+                label="Tipo de Identificación (CC)"
+              >
+                {identificationOptions.map((item) => (
+                  <MenuItem key={item.id} value={item.code}>
+                    {item.name} ({item.code})
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Número de Identificación"
+              name="identificationNumber"
+              value={formData.identificationNumber}
+              onChange={handleTextFieldChange}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Rol"
+              name="role"
+              value={formData.role}
+              onChange={handleTextFieldChange}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+            />
+          </Grid>
+        </Grid>
+      </form>
+    </ComponentFormInline>
   );
 };
 

@@ -1,127 +1,108 @@
-import {
-  Box,
-  CircularProgress,
-  MenuItem,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Typography,
-} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { IconButton } from "@mui/material";
+import { GridColDef } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-import { toolsService } from "../../services/toolsService";
-import { Tool } from "../../types/tool/tool.type";
-import { User } from "../../types/users/user.types";
 import { getUsers } from "../../services/userService";
+import { User } from "../../types/users/user.types";
+import DataGridComponent from "../componentesGenerales/Tabla/tabla.components";
+import EditUserModal from "./updateUserModal";
 
-const UserList = () => {
+const UserList: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [toolsIdentification, setToolsIdentification] = useState<Tool[]>([]);
-  const [toolsGender, setToolsGender] = useState<Tool[]>([]);
-  const [filterIdentification, setFilterIdentification] = useState<string>("");
-  const [filterGender, setFilterGender] = useState<string>("");
+  const [, setLoading] = useState<boolean>(true);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const userData = await getUsers();
-        setUsers(userData);
-
-        const identificationData = await toolsService.getToolsByCode("CC");
-        setToolsIdentification(identificationData);
-
-        const genderData = await toolsService.getToolsByCode("GG");
-        setToolsGender(genderData);
-      } catch (error) {
-        console.error("Error al obtener datos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    fetchUsers();
   }, []);
 
-  const filteredUsers = users.filter(
-    (user) =>
-      (filterIdentification ? user.tool.code === filterIdentification : true) &&
-      (filterGender ? user.tool.code === filterGender : true)
-  );
+  const fetchUsers = async () => {
+    try {
+      const data = await getUsers();
+      setUsers(data);
+    } catch (error) {
+      console.error("Error al obtener usuarios:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEdit = (user: User) => {
+    setSelectedUserId(user.id_user);
+    setEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+    setSelectedUserId(null);
+  };
+
+  const columns: GridColDef<User>[] = [
+    { field: "id_user", headerName: "ID", width: 90 },
+    { field: "code_tool", headerName: "Código de Utilitario", width: 150 },
+    {
+      field: "tool",
+      headerName: "Tipo de Identificación",
+      width: 200,
+      renderCell: (params) => params.row.tool?.name || "N/A",
+    },
+    { field: "identificationNumber", headerName: "Identificación", width: 150 },
+    { field: "name", headerName: "Nombre", flex: 1 },
+    { field: "email", headerName: "Correo", flex: 1 },
+    { field: "role", headerName: "Rol", width: 120 },
+    {
+      field: "state",
+      headerName: "Estado",
+      width: 100,
+      renderCell: (params) => (params.value ? "Activo" : "Inactivo"),
+    },
+    {
+      field: "actions",
+      headerName: "Acciones",
+      width: 200,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <>
+          <IconButton
+            onClick={() => handleEdit(params.row)}
+            color="primary"
+            size="small"
+          >
+            <EditIcon />
+          </IconButton>
+          <IconButton
+            onClick={() => console.log("Eliminar", params.row.id_user)}
+            color="secondary"
+            size="small"
+          >
+            <DeleteIcon />
+          </IconButton>
+        </>
+      ),
+    },
+  ];
 
   return (
-    <Box sx={{ width: "80%", margin: "auto", mt: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Lista de Usuarios
-      </Typography>
+    <>
+      <DataGridComponent
+        rows={users}
+        columns={columns}
+        title="Lista de Usuarios"
+        getRowId={(row) => row.id_user}
+      />
 
-      <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
-        <TextField
-          select
-          label="Filtrar por Tipo de Identificación"
-          value={filterIdentification}
-          onChange={(e) => setFilterIdentification(e.target.value)}
-          fullWidth
-        >
-          <MenuItem value="">Todos</MenuItem>
-          {toolsIdentification.map((tool) => (
-            <MenuItem key={tool.id} value={tool.code}>
-              {tool.name}
-            </MenuItem>
-          ))}
-        </TextField>
-
-        <TextField
-          select
-          label="Filtrar por Género"
-          value={filterGender}
-          onChange={(e) => setFilterGender(e.target.value)}
-          fullWidth
-        >
-          <MenuItem value="">Todos</MenuItem>
-          {toolsGender.map((tool) => (
-            <MenuItem key={tool.id} value={tool.code}>
-              {tool.name}
-            </MenuItem>
-          ))}
-        </TextField>
-      </Box>
-
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Tipo de Identificación</TableCell>
-                <TableCell>Género</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredUsers.map((user) => (
-                <TableRow key={user.id_user}>
-                  <TableCell>{user.id_user}</TableCell>
-                  <TableCell>{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.tool?.name}</TableCell>
-                  <TableCell>
-                    {user.tool?.code === "GG" ? user.tool.name : "-"}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+      {selectedUserId !== null && (
+        <EditUserModal
+          open={editModalOpen}
+          identificationNumber={selectedUserId}
+          onClose={handleCloseEditModal}
+          onSuccess={fetchUsers} // Recargar lista después de editar
+        />
       )}
-    </Box>
+    </>
   );
 };
 

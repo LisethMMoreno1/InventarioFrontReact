@@ -38,7 +38,6 @@ const CreateTool: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
       onSubmit={formik.handleSubmit}
       onCancel={() => formik.resetForm()}
       submitLabel="Crear Utilitario"
-      cancelLabel="Cancelar"
     >
       <form onSubmit={formik.handleSubmit} noValidate>
         <Grid container spacing={2}>

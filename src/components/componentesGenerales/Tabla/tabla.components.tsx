@@ -13,12 +13,14 @@ interface DataGridProps<T extends GridValidRowModel> {
   rows: T[];
   columns: GridColDef<T>[];
   title?: string;
+  getRowId?: (row: T) => any; // <-- Agregar esta línea
 }
 
 const DataGridComponent = <T extends GridValidRowModel>({
   rows,
   columns,
   title,
+  getRowId, // <-- Recibirlo como prop
 }: DataGridProps<T>) => {
   return (
     <Paper
@@ -40,13 +42,10 @@ const DataGridComponent = <T extends GridValidRowModel>({
         <DataGrid
           rows={rows}
           columns={columns}
+          getRowId={getRowId} // <-- Pasarlo a DataGrid
           initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 10 },
-            },
-            sorting: {
-              sortModel: [],
-            },
+            pagination: { paginationModel: { page: 0, pageSize: 10 } },
+            sorting: { sortModel: [] },
           }}
           pageSizeOptions={[5, 10, 25]}
           checkboxSelection
@@ -65,16 +64,12 @@ const DataGridComponent = <T extends GridValidRowModel>({
               borderBottom: "1px solid",
               borderColor: "divider",
             },
-            "& .MuiDataGrid-cell": {
-              borderBottom: "none",
-            },
+            "& .MuiDataGrid-cell": { borderBottom: "none" },
             "& .MuiDataGrid-row": {
               borderBottom: "1px solid",
               borderColor: "divider",
               transition: "background-color 0.2s",
-              "&:hover": {
-                backgroundColor: "action.hover",
-              },
+              "&:hover": { backgroundColor: "action.hover" },
             },
             "& .MuiDataGrid-row:nth-of-type(even)": {
               backgroundColor: "action.hover",

@@ -10,9 +10,9 @@ import React from "react";
 
 import ToolPage from "../pages/Tool/toolPage";
 import {
-  default as CreateUserPage,
-  default as ListUserPage,
+  default as CreateUserPage
 } from "../pages/Users/createUser";
+import UserLisPage from "../pages/Users/listUser";
 import { RouteType } from "./route";
 
 const AppRouter: RouteType[] = [
@@ -33,7 +33,7 @@ const AppRouter: RouteType[] = [
       },
       {
         path: "Lista de Usuario",
-        element: <ListUserPage />,
+        element: <UserLisPage />,
         sidebarProps: {
           displayText: "Lista de Usuario",
           icon: <ListAltIcon />,
@@ -50,8 +50,8 @@ const AppRouter: RouteType[] = [
     children: [
       {
         path: "Registro de Cliente",
-/*         element: <InventoryManagement />,
- */        sidebarProps: {
+        /*         element: <InventoryManagement />,
+         */ sidebarProps: {
           displayText: "Registro de Cliente",
           icon: <GroupIcon />,
         },
