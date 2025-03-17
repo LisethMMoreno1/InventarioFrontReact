@@ -1,111 +1,64 @@
 "use client";
 
-import React from "react";
-import { Grid, TextField } from "@mui/material";
-import { useFormik } from "formik";
-import ComponentFormInline from "../componentesGenerales/Form/componentFormInline";
+import React, { useState, useEffect } from "react";
+import { useToolsStore } from "../../store/tool/useToolStore";
 import { toolsService } from "../../services/toolsService";
-import { Tool } from "../../types/tool/tool.type";
-import { createToolSchema } from "../../types/tool/createTool.schema";
+import ComponentFormInline from "../componentesGenerales/Form/componentFormInline";
+import { Tool } from "../../types/tool/tool.types";
+import ToolForm from "./toolForm";
 
 const CreateTool: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
-  const formik = useFormik({
-    initialValues: {
-      name: "",
-      type: "",
-      code: "",
-      description: "",
-    },
-    validationSchema: createToolSchema,
-    onSubmit: async (values, { resetForm }) => {
-      try {
-        // Se construye el payload con los campos editables
-        const payload = values;
-        const newTool = await toolsService.create(payload as Tool);
-        console.log("Herramienta creada:", newTool);
-        alert("Utilitario guardado de manera exitosa");
-        onSuccess();
-        resetForm();
-      } catch (error) {
-        console.error("Error al crear la herramienta:", error);
-      }
-    },
-  });
+  const createTool = useToolsStore((state) => state.createTool);
+  const [toolOptions, setToolOptions] = useState<Tool[]>([]);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null); // ✅ Estado para manejar errores
+
+  useEffect(() => {
+    toolsService
+      .getAll()
+      .then((data: Tool[]) => setToolOptions(data))
+      .catch((error: unknown) =>
+        console.error("Error al obtener herramientas:", error)
+      );
+  }, []);
+
+  useEffect(() => {
+    if (saved) {
+      alert("Utilitario guardado exitosamente");
+      setSaved(false);
+    }
+  }, [saved]);
+
+  const handleSubmit = async (values: any) => {
+    try {
+      await createTool(values);
+      setSaved(true);
+      onSuccess();
+      setError(null);
+    } catch (error: any) {
+      console.error("Error al crear la herramienta:", error);
+      setError(error.message || "Error al guardar el utilitario");
+    }
+  };
 
   return (
     <ComponentFormInline
       title="Crear Utilitario"
-      onSubmit={formik.handleSubmit}
-      onCancel={() => formik.resetForm()}
+      onSubmit={handleSubmit}
       submitLabel="Crear Utilitario"
     >
-      <form onSubmit={formik.handleSubmit} noValidate>
-        <Grid container spacing={2}>
-          {/* Primera fila: Nombre y Tipo */}
-          <Grid item xs={8} sm={3}>
-            <TextField
-              label="Nombre"
-              name="name"
-              value={formik.values.name}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.name && Boolean(formik.errors.name)}
-              helperText={formik.touched.name && formik.errors.name}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs={8} sm={3}>
-            <TextField
-              label="Tipo"
-              name="type"
-              value={formik.values.type}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.type && Boolean(formik.errors.type)}
-              helperText={formik.touched.type && formik.errors.type}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-            />
-          </Grid>
-          {/* Segunda fila: Código y Descripción */}
-          <Grid item xs={8} sm={3}>
-            <TextField
-              label="Código"
-              name="code"
-              value={formik.values.code}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.code && Boolean(formik.errors.code)}
-              helperText={formik.touched.code && formik.errors.code}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-            />
-          </Grid>
-          <Grid item xs={8} sm={3}>
-            <TextField
-              label="Descripción"
-              name="description"
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                formik.touched.description && Boolean(formik.errors.description)
-              }
-              helperText={
-                formik.touched.description && formik.errors.description
-              }
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              multiline
-            />
-          </Grid>
-        </Grid>
-      </form>
+      {error && <div style={{ color: "red" }}>{error}</div>}{" "}
+      {/* ✅ Mostrar error */}
+      <ToolForm
+        initialValues={{
+          name: "",
+          type: "",
+          code: "",
+          description: "",
+        }}
+        onSubmit={handleSubmit}
+        toolOptions={toolOptions}
+      />
     </ComponentFormInline>
   );
 };

@@ -4,5 +4,5 @@ interface ActionButtonProps {
   text: string;
   loadingText?: string;
   disabled?: boolean;
-  startIcon?: React.ReactNode; // For the icon before the text (optional)
+  startIcon?: React.ReactNode;
 }

@@ -5,7 +5,7 @@ export const createUserSchema = yup.object({
     .number()
     .required("El tipo de identificación es requerido"),
   identificationNumber: yup
-    .string() // Cambiado a string para coincidir con el tipo de User
+    .string()
     .required("El número de identificación es requerido"),
   name: yup.string().required("El nombre es requerido"),
   email: yup

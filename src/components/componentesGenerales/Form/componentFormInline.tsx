@@ -6,18 +6,18 @@ import React from "react";
 
 interface ComponentFormInlineProps {
   title: string;
-  onSubmit: () => void;
-  onCancel: () => void;
+  onSubmit: (values?: any) => void;
   submitLabel?: string;
   cancelLabel?: string;
   children: React.ReactNode;
+  isLoading?: boolean;
 }
 
 const ComponentFormInline: React.FC<ComponentFormInlineProps> = ({
   title,
   onSubmit,
   submitLabel = "Guardar",
-
+  isLoading = false,
   children,
 }) => {
   return (
@@ -43,7 +43,7 @@ const ComponentFormInline: React.FC<ComponentFormInlineProps> = ({
       >
         <Tooltip title={submitLabel}>
           <Button
-            onClick={onSubmit}
+            onClick={() => onSubmit()}
             variant="contained"
             color="primary"
             startIcon={<SaveIcon />}
@@ -59,6 +59,7 @@ const ComponentFormInline: React.FC<ComponentFormInlineProps> = ({
             }}
           >
             {submitLabel}
+            {isLoading ? "Guardando..." : submitLabel}
           </Button>
         </Tooltip>
       </Box>

@@ -1,16 +1,17 @@
-import { Tool } from "../tool/tool.type";
+import { RolesEnum } from "../role/roles.enum";
+import { Tool } from "../tool/tool.types";
 
 export type User = {
   id_user: number;
-  identificationNumber: string;
+  identificationNumber: number;
   name: string;
   email: string;
   password?: string;
   code_tool: string;
-  tool: Tool; // ✅ Agregar esta propiedad
+  tool: Tool;
   state: boolean;
   accessToken?: string;
   created_at: Date;
   updated_at: Date;
-  role: string;
+  role: RolesEnum;
 };

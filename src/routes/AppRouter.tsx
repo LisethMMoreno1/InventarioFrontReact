@@ -1,18 +1,19 @@
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import CardMembershipIcon from "@mui/icons-material/CardMembership";
-import GroupIcon from "@mui/icons-material/Group";
-import HistoryIcon from "@mui/icons-material/History";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
 import React from "react";
 
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import CarRepairIcon from "@mui/icons-material/CarRepair";
+import OrderPage from "../pages/Order/orderPage";
 import ToolPage from "../pages/Tool/toolPage";
-import {
-  default as CreateUserPage
-} from "../pages/Users/createUser";
+import { default as CreateUserPage } from "../pages/Users/createUser";
 import UserLisPage from "../pages/Users/listUser";
+import VehicleDeliveryRecordPage from "../pages/VehicleDeliveryRecord/vehicleDeliveryRecordPage";
+import VehicleReceptionRecordPage from "../pages/VehicleReceptionRecord/vehicleReceptionRecordPage";
 import { RouteType } from "./route";
 
 const AppRouter: RouteType[] = [
@@ -42,59 +43,43 @@ const AppRouter: RouteType[] = [
     ],
   },
   {
-    path: "Cliente",
+    path: "Vehiculo",
     sidebarProps: {
-      displayText: "Cliente",
-      icon: <GroupIcon />,
+      displayText: "Vehiculo",
+      icon: <CarRepairIcon />,
     },
     children: [
       {
-        path: "Registro de Cliente",
-        /*         element: <InventoryManagement />,
-         */ sidebarProps: {
-          displayText: "Registro de Cliente",
-          icon: <GroupIcon />,
+        path: "Registro de entrega de vehículos",
+        element: <VehicleDeliveryRecordPage />,
+        sidebarProps: {
+          displayText: "Registro de entrega de vehículos",
+          icon: <CarRepairIcon />,
         },
       },
       {
-        path: "Lista de Clientes",
-        /*   element: <ListCustomersPages />, */
+        path: "Registro de recepción de vehículos",
+        element: <VehicleReceptionRecordPage />,
         sidebarProps: {
-          displayText: "Lista de Clientes",
-          icon: <HistoryIcon />,
-        },
-      },
-      {
-        path: "Detalle de Orden",
-        /*   element: <OrderDetailsPage />, */
-        sidebarProps: {
-          displayText: "Detalle de Orden",
-          icon: <HistoryIcon />,
-        },
-      },
-      {
-        path: "Lista de Orden",
-        /*  element: <ListOrdenPage />, */
-        sidebarProps: {
-          displayText: "Lista de Orden",
-          icon: <HistoryIcon />,
+          displayText: "Registro de recepción de vehículos",
+          icon: <CarRepairIcon />,
         },
       },
     ],
   },
   {
-    path: "Producto",
+    path: "Order",
     sidebarProps: {
-      displayText: "Productos",
-      icon: <InventoryIcon />,
+      displayText: "Order",
+      icon: <BookmarkBorderIcon />,
     },
     children: [
       {
-        path: "Registro de Producto",
-        /*  element: <ProductsPage />, */
+        path: "Registro de Order",
+        element: <OrderPage />,
         sidebarProps: {
-          displayText: "Registro de Producto",
-          icon: <InventoryIcon />,
+          displayText: "Registro de Order",
+          icon: <BookmarkBorderIcon />,
         },
       },
       {

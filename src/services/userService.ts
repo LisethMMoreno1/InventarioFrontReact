@@ -1,7 +1,7 @@
 import { User } from "../types/users/user.types";
 import api from "./api";
 
-// Obtener todos los usuarios
+// Método para obtener todos los usuarios
 export async function getUsers(): Promise<User[]> {
   try {
     const response = await api.get<User[]>("/user");
@@ -12,7 +12,7 @@ export async function getUsers(): Promise<User[]> {
   }
 }
 
-// Obtener usuario por ID
+// Método para obtener usuario por ID
 export async function getUserById(identificationNumber: number): Promise<User> {
   try {
     const response = await api.get<User>(`/user/${identificationNumber}`);
@@ -26,7 +26,7 @@ export async function getUserById(identificationNumber: number): Promise<User> {
   }
 }
 
-// Crear un usuario
+// Método para Crear un usuario
 export async function createUser(user: Partial<User>): Promise<User> {
   try {
     const response = await api.post<User>("/user", user);
@@ -37,7 +37,7 @@ export async function createUser(user: Partial<User>): Promise<User> {
   }
 }
 
-// Actualizar un usuario
+// Método para  Actualizar un usuario
 export async function updateUser(
   identificationNumber: number,
   user: Partial<User>
@@ -54,12 +54,19 @@ export async function updateUser(
   }
 }
 
-// Eliminar un usuario
-export async function deleteUser(id: number): Promise<void> {
+// Método para  Eliminar un usuario
+
+export async function deleteUser(
+  identificationNumber: number,
+  state: number
+): Promise<void> {
   try {
-    await api.delete(`/user/${id}`);
+    await api.delete(`/user/${identificationNumber}/${state}`);
   } catch (error) {
-    console.error(`Error al eliminar usuario con ID ${id}:`, error);
+    console.error(
+      `Error al eliminar usuario con ID ${identificationNumber}:`,
+      error
+    );
     throw error;
   }
 }

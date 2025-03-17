@@ -35,7 +35,6 @@ const ComponentFormModal: React.FC<ComponentFormProps> = ({
     <Dialog
       open={open}
       onClose={(event, reason) => {
-        // No cerrar si el motivo es clic en el backdrop.
         if (reason === "backdropClick") return;
         onClose();
       }}

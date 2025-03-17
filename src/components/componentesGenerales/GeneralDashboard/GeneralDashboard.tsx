@@ -15,7 +15,7 @@ export interface GeneralDashboardProps {
   title?: string;
   routes: RouteType[];
   children: React.ReactNode;
-  sx?: SxProps<Theme>; // Cambié `React.ReactNode` por `SxProps<Theme>`
+  sx?: SxProps<Theme>;
 }
 
 const GeneralDashboard: React.FC<GeneralDashboardProps> = ({
@@ -32,7 +32,7 @@ const GeneralDashboard: React.FC<GeneralDashboardProps> = ({
   const breadcrumbs = pathSegments.map((segment, index) => {
     const href = "/" + pathSegments.slice(0, index + 1).join("/");
     return {
-      label: segment.replace(/%20/g, " "), // Decodificar %20 a espacio
+      label: segment.replace(/%20/g, " "),
       href,
     };
   });

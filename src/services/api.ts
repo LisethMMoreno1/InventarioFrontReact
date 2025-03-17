@@ -1,12 +1,14 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3001/api", // Ajusta con la URL de tu backend
+  baseURL: "http://localhost:3001/api", // Ensure this is correct
   timeout: 5000,
   headers: { "Content-Type": "application/json" },
 });
 
-// Interceptor para manejar autenticación (opcional)
+console.log("Axios baseURL:", api.defaults.baseURL); // Log the base URL
+
+// Interceptor for authentication
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -20,4 +22,5 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
 export default api;
