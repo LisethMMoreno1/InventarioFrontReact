@@ -1,24 +1,38 @@
 import { create } from "zustand";
 import { Order } from "../../types/order/order.types";
-import { VehicleReceptionRecord } from "../../types/vehicleReceptionRecord/vehicleReceptionRecord.types";
-import { VehicleDeliveryRecord } from "../../types/vehicleDeliveryRecord/vehicleDeliveryRecord.types";
-import { createOrder as createOrderService } from "../../services/orderService";
+import {
+  getOrder,
+  createOrder as createOrderService,
+} from "../../services/orderService";
 import { getVehicleDeliveryRecords } from "../../services/vehicleDeliveryRecordService";
 import { getVehicleReceptionRecords } from "../../services/vehicleReceptionRecordService";
 
 interface OrderStore {
+  orders: Order[];
+  loading: boolean;
+  receptionRecords: any[];
+  deliveryRecords: any[];
+  fetchOrders: () => Promise<void>;
   createOrder: (order: Partial<Order>) => Promise<void>;
   fetchReceptionRecords: () => Promise<void>;
   fetchDeliveryRecords: () => Promise<void>;
-  loading: boolean;
-  receptionRecords: VehicleReceptionRecord[];
-  deliveryRecords: VehicleDeliveryRecord[];
 }
 
 const useOrderStore = create<OrderStore>((set) => ({
+  orders: [],
   loading: false,
   receptionRecords: [],
   deliveryRecords: [],
+
+  fetchOrders: async () => {
+    set({ loading: true });
+    try {
+      const orders = await getOrder();
+      set({ orders });
+    } finally {
+      set({ loading: false });
+    }
+  },
 
   createOrder: async (order) => {
     set({ loading: true });

@@ -15,6 +15,7 @@ interface DataGridProps<T extends GridValidRowModel> {
   columns: GridColDef<T>[];
   title?: string;
   getRowId?: (row: T) => any;
+  loading?: boolean; // nueva propiedad para controlar la carga
 }
 
 const DataGridComponent = <T extends GridValidRowModel>({
@@ -22,6 +23,7 @@ const DataGridComponent = <T extends GridValidRowModel>({
   columns,
   title,
   getRowId,
+  loading = false,
 }: DataGridProps<T>) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -79,6 +81,7 @@ const DataGridComponent = <T extends GridValidRowModel>({
               quickFilterProps: { debounceMs: 500 },
             },
           }}
+          loading={loading} // Propiedad para mostrar el esqueleto
           sx={{
             border: "none",
             "& .MuiDataGrid-columnHeaders": {

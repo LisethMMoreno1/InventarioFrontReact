@@ -1,16 +1,11 @@
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+"use client";
+
 import React, { useEffect, useState } from "react";
 import useOrderStore from "../../../store/order/useOrderStore";
 import { Order } from "../../../types/order/order.types";
 import ComponentFormInline from "../Form/componentFormInline";
 import { SelectChangeEvent } from "@mui/material";
+import OrderForm from "./orderForm";
 
 const OrderCreate = () => {
   const {
@@ -23,19 +18,23 @@ const OrderCreate = () => {
   } = useOrderStore();
 
   const [formData, setFormData] = useState<Partial<Order>>({
-    orderNumber: "", // Se llenará automáticamente
+    orderNumber: "",
     status: "Activo",
     workDetails: "",
     cost: 0,
-    receptionRecordId: undefined, // Agregar esta propiedad
-    deliveryRecordId: undefined, // Agregar esta propiedad
+    receptionRecordId: undefined,
+    deliveryRecordId: undefined,
   });
 
-  // Obtener el número de orden y los registros al cargar el componente
   useEffect(() => {
     fetchReceptionRecords();
     fetchDeliveryRecords();
-  }, [fetchReceptionRecords, fetchDeliveryRecords]);
+  }, [fetchDeliveryRecords, fetchReceptionRecords]);
+
+  useEffect(() => {
+    console.log("Reception Records:", receptionRecords);
+    console.log("Delivery Records:", deliveryRecords);
+  }, [receptionRecords, deliveryRecords]);
 
   const handleChange = (
     e:
@@ -50,8 +49,8 @@ const OrderCreate = () => {
   };
 
   const handleSubmit = async () => {
-    const { orderNumber, ...dataToSend } = formData; // Excluir orderNumber
-    dataToSend.cost = Number(dataToSend.cost); // Convertir cost a número
+    const { orderNumber, ...dataToSend } = formData;
+    dataToSend.cost = Number(dataToSend.cost);
 
     await createOrder(dataToSend);
 
@@ -70,61 +69,12 @@ const OrderCreate = () => {
       onSubmit={handleSubmit}
       isLoading={loading}
     >
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <FormControl fullWidth>
-          <InputLabel>Registro de Recepción</InputLabel>
-          <Select
-            name="receptionRecordId"
-            value={formData.receptionRecordId || ""}
-            onChange={handleChange}
-            label="Registro de Recepción"
-            required
-          >
-            {receptionRecords.map((record) => (
-              <MenuItem key={record.id} value={record.id}>
-                {`ID: ${record.id} - Fecha: ${new Date(
-                  record.arrivalDate
-                ).toLocaleDateString()}`}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <FormControl fullWidth>
-          <InputLabel>Registro de Entrega</InputLabel>
-          <Select
-            name="deliveryRecordId"
-            value={formData.deliveryRecordId || ""}
-            onChange={handleChange}
-            label="Registro de Entrega"
-          >
-            {deliveryRecords.map((record) => (
-              <MenuItem key={record.id} value={record.id}>
-                {`ID: ${record.id} - Fecha: ${new Date(
-                  record.deliveryDate
-                ).toLocaleDateString()}`}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <TextField
-          label="Detalles del Trabajo"
-          name="workDetails"
-          value={formData.workDetails}
-          onChange={handleChange}
-          multiline
-          rows={3}
-        />
-        <TextField
-          label="Costo"
-          name="cost"
-          type="number"
-          value={formData.cost}
-          onChange={handleChange}
-          required
-        />
-      </Box>
+      <OrderForm
+        formData={formData}
+        receptionRecords={receptionRecords}
+        deliveryRecords={deliveryRecords}
+        handleChange={handleChange}
+      />
     </ComponentFormInline>
   );
 };

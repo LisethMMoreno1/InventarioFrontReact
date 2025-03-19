@@ -1,8 +1,8 @@
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import CardMembershipIcon from "@mui/icons-material/CardMembership";
-import InventoryIcon from "@mui/icons-material/Inventory";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import PersonIcon from "@mui/icons-material/Person";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import SettingsIcon from "@mui/icons-material/Settings";
 import React from "react";
 
@@ -13,6 +13,8 @@ import ToolPage from "../pages/Tool/toolPage";
 import { default as CreateUserPage } from "../pages/Users/createUser";
 import UserLisPage from "../pages/Users/listUser";
 import VehicleDeliveryRecordPage from "../pages/VehicleDeliveryRecord/vehicleDeliveryRecordPage";
+import VehicleOwnerListPage from "../pages/VehicleOwner/vehicleOwnerList";
+import VehicleOwnerPage from "../pages/VehicleOwner/vehicleOwnerPage";
 import VehicleReceptionRecordPage from "../pages/VehicleReceptionRecord/vehicleReceptionRecordPage";
 import { RouteType } from "./route";
 
@@ -83,44 +85,19 @@ const AppRouter: RouteType[] = [
         },
       },
       {
-        path: "Lista de Productos",
-        /*  element: <ListProductsPage />, */
+        path: "Propietario del vehículo",
+        element: <VehicleOwnerPage />,
         sidebarProps: {
-          displayText: "Lista de Productos",
-          icon: <InventoryIcon />,
+          displayText: "Propietario del vehículo",
+          icon: <PersonAddAlt1Icon />,
         },
       },
       {
-        path: "Registro de Compras",
-        /*     element: <PurchasePage />, */
+        path: " Lista de Propietario de vehículos",
+        element: <VehicleOwnerListPage />,
         sidebarProps: {
-          displayText: "Registro de Compras",
-          icon: <InventoryIcon />,
-        },
-      },
-      {
-        path: "Lista de Compras",
-        /*  element: <ListPurchasePage />, */
-        sidebarProps: {
-          displayText: "Lista de Compras",
-          icon: <InventoryIcon />,
-        },
-      },
-    ],
-  },
-  {
-    path: "/pagos",
-    sidebarProps: {
-      displayText: "Pagos",
-      icon: <PersonIcon />,
-    },
-    children: [
-      {
-        path: "Lista de Pagos",
-        /*    element: <PaymentListPage />, */
-        sidebarProps: {
-          displayText: "Lista de Pagos",
-          icon: <AccountBoxIcon />,
+          displayText: "Lista de Propietario de vehículos",
+          icon: <PersonAddAlt1Icon />,
         },
       },
     ],

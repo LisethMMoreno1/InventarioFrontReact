@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { TextField, FormControlLabel, Checkbox } from "@mui/material";
-
-import React from "react";
+import React, { useState } from "react";
 import { useVehicleDeliveryStore } from "../../store/vehicleDeliveryRecord/useCreateVehicleDeliveryRecord";
 import ComponentFormInline from "../componentesGenerales/Form/componentFormInline";
+import VehicleDeliveryRecordForm from "./vehicleDeliveryRecordForm";
 
 const CreateVehicleDeliveryRecord = () => {
   const { addRecord } = useVehicleDeliveryStore();
@@ -16,7 +14,7 @@ const CreateVehicleDeliveryRecord = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -49,35 +47,9 @@ const CreateVehicleDeliveryRecord = () => {
       onSubmit={handleSubmit}
       isLoading={isLoading}
     >
-      <TextField
-        label="Fecha de Entrega"
-        type="date"
-        name="deliveryDate"
-        value={formData.deliveryDate}
-        onChange={handleChange}
-        fullWidth
-        InputLabelProps={{ shrink: true }}
-        sx={{ mb: 2 }}
-      />
-      <TextField
-        label="Reparaciones Realizadas"
-        name="completedRepairs"
-        value={formData.completedRepairs}
-        onChange={handleChange}
-        fullWidth
-        multiline
-        rows={3}
-        sx={{ mb: 2 }}
-      />
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={formData.customerSatisfaction}
-            onChange={handleChange}
-            name="customerSatisfaction"
-          />
-        }
-        label="Cliente Satisfecho"
+      <VehicleDeliveryRecordForm
+        formData={formData}
+        handleChange={handleChange}
       />
     </ComponentFormInline>
   );

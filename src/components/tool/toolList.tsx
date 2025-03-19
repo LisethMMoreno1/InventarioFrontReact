@@ -16,9 +16,11 @@ const ListTool: React.FC = () => {
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   const [selectedToolId, setSelectedToolId] = useState<number | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchTools();
+    setIsLoading(false);
   }, [fetchTools]);
 
   const handleEdit = (toolId: number) => {
@@ -76,6 +78,7 @@ const ListTool: React.FC = () => {
         rows={tools}
         columns={columns}
         title="Lista de Utilitarios"
+        loading={isLoading}
       />
       {selectedToolId !== null && (
         <EditToolModal

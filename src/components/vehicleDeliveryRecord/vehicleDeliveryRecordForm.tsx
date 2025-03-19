@@ -1,55 +1,54 @@
-import { Box, TextField, FormControlLabel, Checkbox } from "@mui/material";
-import { FormikProps } from "formik";
+"use client";
+
+import { TextField, FormControlLabel, Checkbox } from "@mui/material";
 import React from "react";
 
-interface VehicleDeliveryRecordFormProps {
-  formik: FormikProps<{
+interface VehicleDeliveryFormProps {
+  formData: {
     deliveryDate: string;
     completedRepairs: string;
     customerSatisfaction: boolean;
-  }>;
+  };
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const VehicleDeliveryRecordForm: React.FC<VehicleDeliveryRecordFormProps> = ({
-  formik,
+const VehicleDeliveryRecordForm: React.FC<VehicleDeliveryFormProps> = ({
+  formData,
+  handleChange,
 }) => {
   return (
-    <Box sx={{ display: "grid", gap: 2 }}>
+    <>
       <TextField
-        fullWidth
         label="Fecha de Entrega"
         type="date"
-        InputLabelProps={{ shrink: true }}
-        {...formik.getFieldProps("deliveryDate")}
-        error={
-          formik.touched.deliveryDate && Boolean(formik.errors.deliveryDate)
-        }
-        helperText={formik.touched.deliveryDate && formik.errors.deliveryDate}
-      />
-
-      <TextField
+        name="deliveryDate"
+        value={formData.deliveryDate}
+        onChange={handleChange}
         fullWidth
-        label="Reparaciones Completadas"
-        {...formik.getFieldProps("completedRepairs")}
-        error={
-          formik.touched.completedRepairs &&
-          Boolean(formik.errors.completedRepairs)
-        }
-        helperText={
-          formik.touched.completedRepairs && formik.errors.completedRepairs
-        }
+        InputLabelProps={{ shrink: true }}
+        sx={{ mb: 2 }}
       />
-
+      <TextField
+        label="Reparaciones Realizadas"
+        name="completedRepairs"
+        value={formData.completedRepairs}
+        onChange={handleChange}
+        fullWidth
+        multiline
+        rows={3}
+        sx={{ mb: 2 }}
+      />
       <FormControlLabel
         control={
           <Checkbox
-            checked={formik.values.customerSatisfaction}
-            {...formik.getFieldProps("customerSatisfaction")}
+            checked={formData.customerSatisfaction}
+            onChange={handleChange}
+            name="customerSatisfaction"
           />
         }
-        label="Satisfacción del Cliente"
+        label="Cliente Satisfecho"
       />
-    </Box>
+    </>
   );
 };
 

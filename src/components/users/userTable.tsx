@@ -15,9 +15,11 @@ const UserTable: React.FC = () => {
   const { users, fetchUsers, fetchUserById, deleteUser } = useUserStore();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedDeleteId, setSelectedDeleteId] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchUsers();
+    setIsLoading(false);
   }, [fetchUsers]);
 
   const handleEdit = (user: User) => {
@@ -99,6 +101,7 @@ const UserTable: React.FC = () => {
         columns={columns}
         title="Lista de Usuarios"
         getRowId={(row) => row.id_user}
+        loading={isLoading}
       />
 
       {selectedDeleteId !== null && (

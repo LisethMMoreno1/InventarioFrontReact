@@ -4,12 +4,12 @@ import { VehicleReceptionRecord } from "../vehicleReceptionRecord/vehicleRecepti
 export type Order = {
   id: number;
   orderNumber: string;
-  createdAt: Date;
+  createdAt: string;
   status: "Activo" | "Completa";
-  receptionRecordId?: number; // Agregar esta propiedad
-  deliveryRecordId?: number; // Agregar esta propiedad
+  receptionRecordId?: number;
+  deliveryRecordId?: number;
   receptionRecord: VehicleReceptionRecord;
   deliveryRecord?: VehicleDeliveryRecord;
   workDetails?: string;
-  cost: number;
+  cost: number | string;
 };
