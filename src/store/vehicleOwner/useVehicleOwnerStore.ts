@@ -1,9 +1,6 @@
 import { create } from "zustand";
 import { VehicleOwner } from "../../types/vehicleOwner/vehicleOwner.types";
-import {
-  createVehicleOwner,
-  getVehicleOwners,
-} from "../../services/vehicleOwner";
+import { VehicleOwnerService } from "../../services/vehicleOwner";
 
 interface VehicleOwnerStore {
   vehicleOwners: VehicleOwner[];
@@ -22,7 +19,7 @@ const useVehicleOwnerStore = create<VehicleOwnerStore>((set) => ({
   fetchVehicleOwners: async () => {
     set({ loading: true, error: null });
     try {
-      const owners = await getVehicleOwners();
+      const owners = await VehicleOwnerService.getAll();
       set({ vehicleOwners: owners });
     } catch (error) {
       console.error("Error al obtener propietarios:", error);
@@ -32,11 +29,18 @@ const useVehicleOwnerStore = create<VehicleOwnerStore>((set) => ({
     }
   },
 
-  // Crear un nuevo propietario usando el servicio
+  // Agregar un nuevo propietario
   addVehicleOwner: async (vehicleOwner: Partial<VehicleOwner>) => {
     set({ loading: true, error: null });
+    const newOwner = await VehicleOwnerService.create(vehicleOwner);
+
+    if (!newOwner || typeof newOwner !== "object" || !("id" in newOwner)) {
+      throw new Error("Datos inválidos al crear un propietario");
+    }
+    
     try {
-      const newOwner = await createVehicleOwner(vehicleOwner);
+      const newOwner: VehicleOwner = await VehicleOwnerService.create(vehicleOwner);
+  
       set((state) => ({
         vehicleOwners: [...state.vehicleOwners, newOwner],
       }));
@@ -46,7 +50,8 @@ const useVehicleOwnerStore = create<VehicleOwnerStore>((set) => ({
     } finally {
       set({ loading: false });
     }
-  },
+  }
+  
 }));
 
 export default useVehicleOwnerStore;

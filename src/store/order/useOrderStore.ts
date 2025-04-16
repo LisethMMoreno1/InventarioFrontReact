@@ -1,39 +1,36 @@
 import { create } from "zustand";
-import { Order } from "../../types/order/order.types";
 import {
-  getOrder,
   createOrder as createOrderService,
+  getOrder,
 } from "../../services/orderService";
-import { getVehicleDeliveryRecords } from "../../services/vehicleDeliveryRecordService";
 import { getVehicleReceptionRecords } from "../../services/vehicleReceptionRecordService";
+import { Order } from "../../types/order/order.types";
 
 interface OrderStore {
   orders: Order[];
   loading: boolean;
   receptionRecords: any[];
-  deliveryRecords: any[];
   fetchOrders: () => Promise<void>;
   createOrder: (order: Partial<Order>) => Promise<void>;
   fetchReceptionRecords: () => Promise<void>;
-  fetchDeliveryRecords: () => Promise<void>;
 }
 
-const useOrderStore = create<OrderStore>((set) => ({
+const useOrderStore = create<OrderStore>((set, get) => ({
   orders: [],
   loading: false,
   receptionRecords: [],
-  deliveryRecords: [],
 
+  // AQUÍ DEBES REEMPLAZAR LA FUNCIÓN ACTUAL POR LA NUEVA VERSIÓN
   fetchOrders: async () => {
     set({ loading: true });
     try {
       const orders = await getOrder();
+      console.log("Respuesta completa de la API:", orders); // ← Esto mostrará los datos crudos
       set({ orders });
     } finally {
       set({ loading: false });
     }
   },
-
   createOrder: async (order) => {
     set({ loading: true });
     try {
@@ -48,16 +45,6 @@ const useOrderStore = create<OrderStore>((set) => ({
     try {
       const receptionRecords = await getVehicleReceptionRecords();
       set({ receptionRecords });
-    } finally {
-      set({ loading: false });
-    }
-  },
-
-  fetchDeliveryRecords: async () => {
-    set({ loading: true });
-    try {
-      const deliveryRecords = await getVehicleDeliveryRecords();
-      set({ deliveryRecords });
     } finally {
       set({ loading: false });
     }

@@ -11,8 +11,9 @@ import CarRepairIcon from "@mui/icons-material/CarRepair";
 import OrderPage from "../pages/Order/orderPage";
 import ToolPage from "../pages/Tool/toolPage";
 import { default as CreateUserPage } from "../pages/Users/createUser";
-import UserLisPage from "../pages/Users/listUser";
-import VehicleDeliveryRecordPage from "../pages/VehicleDeliveryRecord/vehicleDeliveryRecordPage";
+
+import UserLisPage from "../pages/Users/ListUser";
+import VehicleExitRecordPage from "../pages/VehicleExitRecord/vehicleExitRecordPage";
 import VehicleOwnerListPage from "../pages/VehicleOwner/vehicleOwnerList";
 import VehicleOwnerPage from "../pages/VehicleOwner/vehicleOwnerPage";
 import VehicleReceptionRecordPage from "../pages/VehicleReceptionRecord/vehicleReceptionRecordPage";
@@ -52,18 +53,18 @@ const AppRouter: RouteType[] = [
     },
     children: [
       {
-        path: "Registro de entrega de vehículos",
-        element: <VehicleDeliveryRecordPage />,
-        sidebarProps: {
-          displayText: "Registro de entrega de vehículos",
-          icon: <CarRepairIcon />,
-        },
-      },
-      {
         path: "Registro de recepción de vehículos",
         element: <VehicleReceptionRecordPage />,
         sidebarProps: {
           displayText: "Registro de recepción de vehículos",
+          icon: <CarRepairIcon />,
+        },
+      },
+      {
+        path: "Registro de entrega de vehículos",
+        element: <VehicleExitRecordPage />,
+        sidebarProps: {
+          displayText: "Registro de entrega de vehículos",
           icon: <CarRepairIcon />,
         },
       },

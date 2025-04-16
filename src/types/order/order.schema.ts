@@ -12,10 +12,10 @@ export const OrderSchemaYup = yup.object().shape({
     .object()
     .shape({ id: yup.number().integer().positive().required() })
     .required(),
-  deliveryRecord: yup
+/*   deliveryRecord: yup
     .object()
     .shape({ id: yup.number().integer().positive() })
-    .nullable(),
+    .nullable(), */
   workDetails: yup.string().nullable(),
   cost: yup.number().min(0).required(),
 });

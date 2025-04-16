@@ -20,10 +20,6 @@ export const vehicleOwnerSchema = yup.object({
   vehicleModel: yup.string().required("El modelo del vehículo es obligatorio"),
   licensePlate: yup
     .string()
-    .matches(
-      /^[A-Z0-9-]+$/,
-      "La placa solo puede contener letras, números y guiones"
-    )
     .required("La placa del vehículo es obligatoria"),
   vehicleColor: yup.string().required("El color del vehículo es obligatorio"),
   insuranceValid: yup.boolean().required("El seguro vigente es obligatorio"),

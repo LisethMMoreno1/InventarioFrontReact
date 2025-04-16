@@ -3,9 +3,9 @@ import EditIcon from "@mui/icons-material/Edit";
 import { IconButton } from "@mui/material";
 import { GridColDef } from "@mui/x-data-grid";
 import React, { useEffect } from "react";
-import useOrderStore from "../../../store/order/useOrderStore";
-import { Order } from "../../../types/order/order.types";
-import DataGridComponent from "../Tabla/tabla.components";
+import useOrderStore from "../../store/order/useOrderStore";
+import DataGridComponent from "../componentesGenerales/Tabla/tabla.components";
+import { Order } from "../../types/order/order.types";
 
 const OrderList: React.FC = () => {
   const { orders, fetchOrders } = useOrderStore();
@@ -31,9 +31,7 @@ const OrderList: React.FC = () => {
       field: "createdAt",
       headerName: "Fecha de Creación",
       flex: 1,
-      valueFormatter: (params: any) => {
-        return params.value;
-      },
+      valueFormatter: (params: any) => params.value,
     },
     {
       field: "status",
@@ -45,11 +43,8 @@ const OrderList: React.FC = () => {
       headerName: "Costo",
       flex: 1,
       type: "number",
-      valueFormatter: (params: any) => {
-        return params.value;
-      },
+      valueFormatter: (params: any) => params.value,
     },
-
     {
       field: "actions",
       headerName: "Acciones",
@@ -57,11 +52,14 @@ const OrderList: React.FC = () => {
       sortable: false,
       renderCell: (params) => (
         <>
-          <IconButton onClick={() => handleEdit(params.row.id)} color="primary">
+          <IconButton
+            onClick={() => handleEdit(params.row?.id)}
+            color="primary"
+          >
             <EditIcon />
           </IconButton>
           <IconButton
-            onClick={() => handleDelete(params.row.id)}
+            onClick={() => handleDelete(params.row?.id)}
             color="secondary"
           >
             <DeleteIcon />
@@ -73,7 +71,8 @@ const OrderList: React.FC = () => {
 
   return (
     <DataGridComponent
-      rows={orders}
+      /* rows={orders} */
+      rows={orders ?? []}
       columns={columns}
       title="Lista de Órdenes"
       getRowId={(row: Order) => row.id}

@@ -1,7 +1,7 @@
 import { Container } from "@mui/material";
 import React from "react";
 import { Outlet } from "react-router-dom";
-import CreateUser from "../../components/users/userCreate";
+import CreateUser from "../../components/users/UserCreate";
 
 const CreateUserPage: React.FC = () => {
   const handleSuccess = () => {

@@ -15,7 +15,7 @@ import { SelectChangeEvent } from "@mui/material";
 interface OrderFormProps {
   formData: any;
   receptionRecords: any[];
-  deliveryRecords: any[];
+  /* deliveryRecords: any[]; */
   handleChange: (
     e:
       | React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -26,7 +26,7 @@ interface OrderFormProps {
 const OrderForm: React.FC<OrderFormProps> = ({
   formData,
   receptionRecords,
-  deliveryRecords,
+ /*   deliveryRecords, */
   handleChange,
 }) => {
   return (
@@ -59,7 +59,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
           </FormControl>
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+  {/*       <Grid item xs={12} sm={6}>
           <FormControl fullWidth>
             <InputLabel>Registro de Entrega</InputLabel>
             <Select
@@ -77,7 +77,7 @@ const OrderForm: React.FC<OrderFormProps> = ({
               ))}
             </Select>
           </FormControl>
-        </Grid>
+        </Grid> */}
 
         <Grid item xs={12} sm={6}>
           <TextField

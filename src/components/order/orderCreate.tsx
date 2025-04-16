@@ -1,21 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import useOrderStore from "../../../store/order/useOrderStore";
-import { Order } from "../../../types/order/order.types";
-import ComponentFormInline from "../Form/componentFormInline";
+
 import { SelectChangeEvent } from "@mui/material";
 import OrderForm from "./orderForm";
+import useOrderStore from "../../store/order/useOrderStore";
+import { Order } from "../../types/order/order.types";
+import ComponentFormInline from "../componentesGenerales/Form/componentFormInline";
 
 const OrderCreate = () => {
-  const {
-    createOrder,
-    loading,
-    fetchReceptionRecords,
-    fetchDeliveryRecords,
-    receptionRecords,
-    deliveryRecords,
-  } = useOrderStore();
+  const { createOrder, loading, fetchReceptionRecords, receptionRecords } =
+    useOrderStore();
 
   const [formData, setFormData] = useState<Partial<Order>>({
     orderNumber: "",
@@ -23,18 +18,15 @@ const OrderCreate = () => {
     workDetails: "",
     cost: 0,
     receptionRecordId: undefined,
-    deliveryRecordId: undefined,
   });
 
   useEffect(() => {
     fetchReceptionRecords();
-    fetchDeliveryRecords();
-  }, [fetchDeliveryRecords, fetchReceptionRecords]);
+  }, [fetchReceptionRecords]);
 
   useEffect(() => {
     console.log("Reception Records:", receptionRecords);
-    console.log("Delivery Records:", deliveryRecords);
-  }, [receptionRecords, deliveryRecords]);
+  }, [receptionRecords]);
 
   const handleChange = (
     e:
@@ -59,7 +51,6 @@ const OrderCreate = () => {
       workDetails: "",
       cost: 0,
       receptionRecordId: undefined,
-      deliveryRecordId: undefined,
     });
   };
 
@@ -72,7 +63,6 @@ const OrderCreate = () => {
       <OrderForm
         formData={formData}
         receptionRecords={receptionRecords}
-        deliveryRecords={deliveryRecords}
         handleChange={handleChange}
       />
     </ComponentFormInline>

@@ -20,7 +20,6 @@ const VehicleOwnerList: React.FC = () => {
 
   const handleEdit = (id: number) => {
     console.log("Editar propietario con ID:", id);
-    // Aquí puedes agregar la lógica para la edición
   };
 
   const columns: GridColDef[] = [

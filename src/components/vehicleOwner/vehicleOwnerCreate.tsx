@@ -24,6 +24,8 @@ const CreateVehicleOwner = () => {
   });
 
   const handleSubmit = async () => {
+    console.log("Datos antes de enviar:", formData); // Verifica los datos
+
     if (
       !formData.fullName ||
       !formData.identificationNumber ||

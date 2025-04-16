@@ -1,3 +1,4 @@
+import { Order } from "../order/order.types";
 import { VehicleReceptionRecord } from "../vehicleReceptionRecord/vehicleReceptionRecord.types";
 
 export type VehicleOwner = {
@@ -15,6 +16,7 @@ export type VehicleOwner = {
   specialInstructions?: string;
   authorizedForPickup: boolean;
   receptionRecords?: VehicleReceptionRecord[];
+  orders?: Order[];
   createdAt?: Date;
   updatedAt?: Date;
 };
